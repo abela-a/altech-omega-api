@@ -24,9 +24,9 @@ class AuthorController extends Controller
      */
     public function index()
     {
-        $data = $this->authorRepositoryInterface->index();
+        $authors = $this->authorRepositoryInterface->index();
 
-        return ApiResponse::sendResponse(AuthorResource::collection($data), '', 200);
+        return ApiResponse::sendResponse(AuthorResource::collection($authors), '', 200);
     }
 
     /**
