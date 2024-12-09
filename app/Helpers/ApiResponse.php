@@ -15,6 +15,11 @@ class ApiResponse
         self::throw($error, $message);
     }
 
+    public static function notFound($message = 'Resource not found')
+    {
+        return response()->json(['success' => false, 'message' => $message], 404);
+    }
+
     public static function throw($error, $message = 'Sorry, something went wrong')
     {
         Log::error($error);

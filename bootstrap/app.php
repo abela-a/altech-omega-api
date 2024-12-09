@@ -14,10 +14,11 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->append([
             RequestLogMiddleware::class,
+            JsonResponseMiddleware::class,
         ]);
 
         $middleware->appendToGroup('api', [
-            JsonResponseMiddleware::class,
+            //
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
