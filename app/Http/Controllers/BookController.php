@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ApiResponse;
+use App\Http\Requests\QueryBookRequest;
 use App\Http\Requests\StoreBookRequest;
 use App\Http\Requests\UpdateBookRequest;
 use App\Http\Resources\BookCollection;
@@ -23,9 +24,9 @@ class BookController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(QueryBookRequest $request)
     {
-        $books = $this->bookRepositoryInterface->index();
+        $books = $this->bookRepositoryInterface->index($request->query());
 
         return ApiResponse::sendResponse(new BookCollection($books), '', 200);
     }

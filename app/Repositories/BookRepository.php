@@ -7,9 +7,15 @@ use App\Models\Book;
 
 class BookRepository implements BookRepositoryInterface
 {
-    public function index()
+    public function index($query)
     {
-        return Book::paginate();
+        $title = $query['title'] ?? null;
+        $publishDate = $query['publish_date'] ?? null;
+
+        return Book::query()
+            ->when($title, fn ($query, $value) => $query->where('title', 'LIKE', "%$value%"))
+            ->when($publishDate, fn ($query, $value) => $query->where('publish_date', $value))
+            ->paginate();
     }
 
     public function show($id)

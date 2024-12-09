@@ -4,7 +4,7 @@ namespace App\Interfaces;
 
 interface BookRepositoryInterface
 {
-    public function index();
+    public function index(array $query);
 
     public function show($id);
 
