@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\ApiResponse;
 use App\Http\Requests\StoreAuthorRequest;
 use App\Http\Requests\UpdateAuthorRequest;
+use App\Http\Resources\AuthorCollection;
 use App\Http\Resources\AuthorResource;
 use App\Interfaces\AuthorRepositoryInterface;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -26,7 +27,7 @@ class AuthorController extends Controller
     {
         $authors = $this->authorRepositoryInterface->index();
 
-        return ApiResponse::sendResponse(AuthorResource::collection($authors), '', 200);
+        return ApiResponse::sendResponse(new AuthorCollection($authors), '', 200);
     }
 
     /**

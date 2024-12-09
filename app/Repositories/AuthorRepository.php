@@ -9,7 +9,7 @@ class AuthorRepository implements AuthorRepositoryInterface
 {
     public function index()
     {
-        return Author::all();
+        return Author::paginate();
     }
 
     public function show($id)

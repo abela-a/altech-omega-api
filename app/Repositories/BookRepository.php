@@ -9,7 +9,7 @@ class BookRepository implements BookRepositoryInterface
 {
     public function index()
     {
-        return Book::all();
+        return Book::paginate();
     }
 
     public function show($id)
@@ -37,6 +37,6 @@ class BookRepository implements BookRepositoryInterface
 
     public function authorBooks($id)
     {
-        return Book::whereAuthorId($id)->get();
+        return Book::whereAuthorId($id)->paginate();
     }
 }

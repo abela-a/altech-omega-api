@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\ApiResponse;
 use App\Http\Requests\StoreBookRequest;
 use App\Http\Requests\UpdateBookRequest;
+use App\Http\Resources\BookCollection;
 use App\Http\Resources\BookResource;
 use App\Interfaces\BookRepositoryInterface;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -26,7 +27,7 @@ class BookController extends Controller
     {
         $books = $this->bookRepositoryInterface->index();
 
-        return ApiResponse::sendResponse(BookResource::collection($books), '', 200);
+        return ApiResponse::sendResponse(new BookCollection($books), '', 200);
     }
 
     /**
