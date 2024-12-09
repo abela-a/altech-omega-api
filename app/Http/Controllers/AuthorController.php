@@ -79,7 +79,7 @@ class AuthorController extends Controller
 
             DB::commit();
 
-            return ApiResponse::sendResponse($author, 'Author updated successfully', 201);
+            return ApiResponse::sendResponse($author, 'Author updated successfully', 200);
         } catch (ModelNotFoundException $exception) {
             return ApiResponse::notFound('Author not found');
         } catch (\Exception $exception) {
