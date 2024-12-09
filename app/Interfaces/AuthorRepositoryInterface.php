@@ -4,7 +4,7 @@ namespace App\Interfaces;
 
 interface AuthorRepositoryInterface
 {
-    public function index();
+    public function index(array $query);
 
     public function show($id);
 

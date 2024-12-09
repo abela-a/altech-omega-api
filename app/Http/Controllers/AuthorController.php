@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ApiResponse;
+use App\Http\Requests\QueryAuthorRequest;
 use App\Http\Requests\StoreAuthorRequest;
 use App\Http\Requests\UpdateAuthorRequest;
 use App\Http\Resources\AuthorCollection;
@@ -23,9 +24,9 @@ class AuthorController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(QueryAuthorRequest $request)
     {
-        $authors = $this->authorRepositoryInterface->index();
+        $authors = $this->authorRepositoryInterface->index($request->query());
 
         return ApiResponse::sendResponse(new AuthorCollection($authors), '', 200);
     }
