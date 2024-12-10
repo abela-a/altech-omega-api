@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ApiResponse;
-use App\Http\Resources\BookCollection;
+use App\Http\Requests\QueryAuthorBookRequest;
+use App\Http\Resources\AuthorBookCollection;
 use App\Interfaces\BookRepositoryInterface;
 use Illuminate\Http\Request;
 
@@ -19,11 +20,11 @@ class AuthorBookController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index($authorId)
+    public function index(QueryAuthorBookRequest $request, $authorId)
     {
-        $books = $this->bookRepositoryInterface->authorBooks($authorId);
+        $books = $this->bookRepositoryInterface->authorBooks($authorId, $request->validated());
 
-        return ApiResponse::sendResponse(new BookCollection($books), '', 200);
+        return ApiResponse::sendResponse(new AuthorBookCollection($books), '', 200);
     }
 
     /**
