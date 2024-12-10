@@ -26,7 +26,7 @@ class BookController extends Controller
      */
     public function index(QueryBookRequest $request)
     {
-        $books = $this->bookRepositoryInterface->index($request->query());
+        $books = $this->bookRepositoryInterface->index($request->validated());
 
         return ApiResponse::sendResponse(new BookCollection($books), '', 200);
     }
@@ -81,7 +81,7 @@ class BookController extends Controller
 
             DB::commit();
 
-            return ApiResponse::sendResponse($book, 'Book updated successfully', 200);
+            return ApiResponse::sendResponse(new BookResource($book), 'Book updated successfully', 200);
         } catch (ModelNotFoundException $exception) {
             return ApiResponse::notFound('Book not found');
         } catch (\Exception $exception) {

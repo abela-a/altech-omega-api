@@ -19,4 +19,19 @@ class Book extends Model
     {
         return $this->belongsTo(Author::class)->withDefault();
     }
+
+    public function scopeSearch($query, $filter)
+    {
+        $query->when($filter ?? null, function ($query, $search) {
+            $query->where(function ($query) use ($search) {
+                $query->where('title', 'LIKE', '%'.$search.'%')
+                    ->orWhere('description', 'LIKE', '%'.$search.'%');
+            });
+        });
+    }
+
+    public function scopePublishedAt($query, $date)
+    {
+        $query->when($date ?? null, fn ($query, $date) => $query->where('publish_date', $date));
+    }
 }

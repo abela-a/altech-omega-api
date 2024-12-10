@@ -14,5 +14,5 @@ interface BookRepositoryInterface
 
     public function delete($id);
 
-    public function authorBooks($id);
+    public function authorBooks($id, array $query);
 }

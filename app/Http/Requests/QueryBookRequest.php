@@ -22,8 +22,11 @@ class QueryBookRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => ['string', 'min:5', 'max:20'],
+            'search' => ['string', 'min:5', 'max:20'],
             'publish_date' => ['date_format:Y-m-d'],
+
+            'perPage' => ['integer', 'min:1'],
+            'columns' => ['array'],
         ];
     }
 }

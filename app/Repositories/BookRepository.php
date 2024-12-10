@@ -10,18 +10,34 @@ class BookRepository implements BookRepositoryInterface
 {
     public function index($query)
     {
-        $title = $query['title'] ?? null;
-        $publishDate = $query['publish_date'] ?? null;
+        $params = [
+            'search' => $query['search'] ?? null,
+            'publishDate' => $query['publish_date'] ?? null,
+            'paginate' => [
+                'perPage' => $query['perPage'] ?? 15,
+                'columns' => $query['columns'] ?? ['*'],
+            ],
+        ];
 
-        return Book::query()
-            ->when($title, fn ($query, $value) => $query->where('title', 'LIKE', "%$value%"))
-            ->when($publishDate, fn ($query, $value) => $query->where('publish_date', $value))
-            ->paginate();
+        $cacheKey = 'books:index|'.serialize($query);
+
+        return Cache::remember($cacheKey, 60, function () use ($params) {
+            return Book::query()
+                ->search($params['search'])
+                ->publishedAt($params['publishDate'])
+                ->cursorPaginate(
+                    $params['paginate']['perPage'],
+                    $params['paginate']['columns'],
+                );
+        });
+
     }
 
     public function show($id)
     {
-        return Book::with('author')->findOrFail($id);
+        return Cache::remember('books:'.$id, 60, function () use ($id) {
+            return Book::with('author')->findOrFail($id);
+        });
     }
 
     public function store(array $data)
@@ -34,12 +50,15 @@ class BookRepository implements BookRepositoryInterface
         $book = Book::findOrFail($id);
         $book->update($data);
 
+        Cache::forget('books:'.$id);
+
         return $book;
     }
 
     public function delete($id)
     {
         Book::destroy($id);
+        Cache::forget('books:'.$id);
     }
 
     public function authorBooks($id, $query)
