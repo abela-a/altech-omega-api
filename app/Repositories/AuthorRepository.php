@@ -11,7 +11,7 @@ class AuthorRepository implements AuthorRepositoryInterface
     public function index($query)
     {
         $params = [
-            'name' => $query['name'] ?? null,
+            'search' => $query['search'] ?? null,
             'paginate' => [
                 'perPage' => $query['perPage'] ?? 15,
                 'columns' => $query['columns'] ?? ['*'],
@@ -24,7 +24,7 @@ class AuthorRepository implements AuthorRepositoryInterface
 
         return Cache::remember($cacheKey, 60, function () use ($params) {
             return Author::query()
-                ->name($params['name'])
+                ->search($params['search'])
                 ->simplePaginate(
                     $params['paginate']['perPage'],
                     $params['paginate']['columns'],

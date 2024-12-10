@@ -22,7 +22,7 @@ class QueryAuthorRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['string', 'min:3', 'max:20'],
+            'search' => ['string', 'min:3', 'max:20'],
 
             'perPage' => ['integer', 'min:1'],
             'columns' => ['array'],
