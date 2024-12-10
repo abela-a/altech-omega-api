@@ -26,7 +26,7 @@ class AuthorController extends Controller
      */
     public function index(QueryAuthorRequest $request)
     {
-        $authors = $this->authorRepositoryInterface->index($request->query());
+        $authors = $this->authorRepositoryInterface->index($request->validated());
 
         return ApiResponse::sendResponse(new AuthorCollection($authors), '', 200);
     }
@@ -81,7 +81,7 @@ class AuthorController extends Controller
 
             DB::commit();
 
-            return ApiResponse::sendResponse($author, 'Author updated successfully', 200);
+            return ApiResponse::sendResponse(new AuthorResource($author), 'Author updated successfully', 200);
         } catch (ModelNotFoundException $exception) {
             return ApiResponse::notFound('Author not found');
         } catch (\Exception $exception) {

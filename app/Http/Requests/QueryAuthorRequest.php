@@ -11,7 +11,7 @@ class QueryAuthorRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,12 @@ class QueryAuthorRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => ['string', 'min:3', 'max:20'],
+
+            'perPage' => ['integer', 'min:1'],
+            'columns' => ['array'],
+            'pageName' => ['string'],
+            'page' => ['integer', 'min:1'],
         ];
     }
 }

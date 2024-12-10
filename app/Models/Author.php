@@ -19,4 +19,9 @@ class Author extends Model
     {
         return $this->hasMany(Book::class);
     }
+
+    public function scopeName($query, $name)
+    {
+        return $query->where('name', 'LIKE', "%$name%");
+    }
 }
