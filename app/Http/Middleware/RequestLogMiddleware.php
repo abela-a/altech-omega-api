@@ -28,7 +28,7 @@ class RequestLogMiddleware
             'path' => $request->getPathInfo(),
             'method' => $request->getMethod(),
             'ip' => $request->ip(),
-            'http_version' => $_SERVER['SERVER_PROTOCOL'],
+            'http_version' => $_SERVER['SERVER_PROTOCOL'] ?? 'HTTP/1.1',
             'timestamp' => $dt->toDateTimeString(),
             'headers' => [
                 'user-agent' => $headers['user-agent'],
