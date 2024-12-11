@@ -23,7 +23,7 @@ class AuthorApiTest extends TestCase
         $response = $this->getJson('/api/v1/authors');
 
         $response
-            ->assertStatus(200)
+            ->assertOk()
             ->assertJsonStructure([
                 'success',
                 'data' => [
@@ -58,7 +58,7 @@ class AuthorApiTest extends TestCase
         $response = $this->getJson('/api/v1/authors?search=Dr.');
 
         $response
-            ->assertStatus(200)
+            ->assertOk()
             ->assertJsonStructure([
                 'success',
                 'data' => [
@@ -92,7 +92,7 @@ class AuthorApiTest extends TestCase
         $response = $this->getJson('/api/v1/authors?search=Not Found');
 
         $response
-            ->assertStatus(200)
+            ->assertOk()
             ->assertJsonStructure([
                 'success',
                 'data' => [
@@ -118,37 +118,43 @@ class AuthorApiTest extends TestCase
     {
         $blankSearch = $this->getJson('/api/v1/authors?search=');
         $blankSearch
-            ->assertStatus(422)
+            ->assertUnprocessable()
+            ->assertInvalid([
+                'search' => 'The search field must be a string.',
+            ])
             ->assertJsonStructure([
                 'message',
                 'errors' => [
                     'search',
                 ],
-            ])
-            ->assertJsonPath('errors.search.0', 'The search field must be a string.');
+            ]);
 
         $invalidSearch = $this->getJson('/api/v1/authors?search=Dr');
         $invalidSearch
-            ->assertStatus(422)
+            ->assertUnprocessable()
+            ->assertInvalid([
+                'search' => 'The search field must be at least 3 characters.',
+            ])
             ->assertJsonStructure([
                 'message',
                 'errors' => [
                     'search',
                 ],
-            ])
-            ->assertJsonPath('errors.search.0', 'The search field must be at least 3 characters.');
+            ]);
 
         $longSearch = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec';
         $invalidSearch = $this->getJson("/api/v1/authors?search=$longSearch");
         $invalidSearch
-            ->assertStatus(422)
+            ->assertUnprocessable()
+            ->assertInvalid([
+                'search' => 'The search field must not be greater than 20 characters.',
+            ])
             ->assertJsonStructure([
                 'message',
                 'errors' => [
                     'search',
                 ],
-            ])
-            ->assertJsonPath('errors.search.0', 'The search field must not be greater than 20 characters.');
+            ]);
     }
 
     public function test_get_authors_paginated()
@@ -156,7 +162,7 @@ class AuthorApiTest extends TestCase
         $response = $this->getJson('/api/v1/authors?perPage=5&columns[]=id&columns[]=name&page=2');
 
         $response
-            ->assertStatus(200)
+            ->assertOk()
             ->assertJsonStructure([
                 'success',
                 'data' => [
@@ -193,7 +199,7 @@ class AuthorApiTest extends TestCase
         ]);
 
         $response
-            ->assertStatus(201)
+            ->assertCreated()
             ->assertJsonStructure([
                 'success',
                 'data' => [
@@ -217,16 +223,18 @@ class AuthorApiTest extends TestCase
         ]);
 
         $response
-            ->assertStatus(422)
+            ->assertUnprocessable()
+            ->assertInvalid([
+                'name' => 'The name field is required.',
+                'birth_date' => 'The birth date field must match the format Y-m-d.',
+            ])
             ->assertJsonStructure([
                 'message',
                 'errors' => [
                     'name',
                     'birth_date',
                 ],
-            ])
-            ->assertJsonPath('errors.name.0', 'The name field is required.')
-            ->assertJsonPath('errors.birth_date.0', 'The birth date field must match the format Y-m-d.');
+            ]);
     }
 
     public function test_show_author()
@@ -234,7 +242,7 @@ class AuthorApiTest extends TestCase
         $response = $this->getJson('/api/v1/authors/1');
 
         $response
-            ->assertStatus(200)
+            ->assertOk()
             ->assertJsonStructure([
                 'success',
                 'data' => [
@@ -253,7 +261,7 @@ class AuthorApiTest extends TestCase
         $response = $this->getJson('/api/v1/authors/1000');
 
         $response
-            ->assertStatus(404)
+            ->assertNotFound()
             ->assertJsonStructure([
                 'message',
             ])
@@ -269,7 +277,7 @@ class AuthorApiTest extends TestCase
         ]);
 
         $response
-            ->assertStatus(200)
+            ->assertOk()
             ->assertJsonStructure([
                 'success',
                 'data' => [
@@ -293,7 +301,7 @@ class AuthorApiTest extends TestCase
         ]);
 
         $response
-            ->assertStatus(404)
+            ->assertNotFound()
             ->assertJsonStructure([
                 'message',
             ])
@@ -309,25 +317,25 @@ class AuthorApiTest extends TestCase
         ]);
 
         $response
-            ->assertStatus(422)
+            ->assertUnprocessable()
+            ->assertInvalid([
+                'name' => 'The name field is required.',
+                'birth_date' => 'The birth date field must match the format Y-m-d.',
+            ])
             ->assertJsonStructure([
                 'message',
                 'errors' => [
                     'name',
                     'birth_date',
                 ],
-            ])
-            ->assertJsonPath('errors.name.0', 'The name field is required.')
-            ->assertJsonPath('errors.birth_date.0', 'The birth date field must match the format Y-m-d.');
+            ]);
     }
 
     public function test_delete_author()
     {
         $response = $this->deleteJson('/api/v1/authors/3');
 
-        $response
-            ->assertStatus(204)
-            ->assertNoContent();
+        $response->assertNoContent();
     }
 
     public function test_delete_author_not_found()
@@ -335,7 +343,7 @@ class AuthorApiTest extends TestCase
         $response = $this->deleteJson('/api/v1/authors/1000');
 
         $response
-            ->assertStatus(404)
+            ->assertNotFound()
             ->assertJsonStructure([
                 'message',
             ])
