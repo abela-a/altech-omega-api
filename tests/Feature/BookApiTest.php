@@ -22,7 +22,7 @@ class BookApiTest extends TestCase
         $response = $this->getJson('/api/v1/books');
 
         $response
-            ->assertStatus(200)
+            ->assertOk()
             ->assertJsonStructure([
                 'success',
                 'data' => [
@@ -51,7 +51,7 @@ class BookApiTest extends TestCase
         $response = $this->getJson('/api/v1/books?search=ipsum');
 
         $response
-            ->assertStatus(200)
+            ->assertOk()
             ->assertJsonStructure([
                 'success',
                 'data' => [
@@ -78,37 +78,43 @@ class BookApiTest extends TestCase
     {
         $blankSearch = $this->getJson('/api/v1/books?search=');
         $blankSearch
-            ->assertStatus(422)
+            ->assertUnprocessable()
+            ->assertInvalid([
+                'search' => 'The search field must be a string.',
+            ])
             ->assertJsonStructure([
                 'message',
                 'errors' => [
                     'search',
                 ],
-            ])
-            ->assertJsonPath('errors.search.0', 'The search field must be a string.');
+            ]);
 
         $invalidSearch = $this->getJson('/api/v1/books?search=min');
         $invalidSearch
-            ->assertStatus(422)
+            ->assertUnprocessable()
+            ->assertInvalid([
+                'search' => 'The search field must be at least 5 characters.',
+            ])
             ->assertJsonStructure([
                 'message',
                 'errors' => [
                     'search',
                 ],
-            ])
-            ->assertJsonPath('errors.search.0', 'The search field must be at least 5 characters.');
+            ]);
 
         $longSearch = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec';
         $invalidSearch = $this->getJson("/api/v1/books?search=$longSearch");
         $invalidSearch
-            ->assertStatus(422)
+            ->assertUnprocessable()
+            ->assertInvalid([
+                'search' => 'The search field must not be greater than 20 characters.',
+            ])
             ->assertJsonStructure([
                 'message',
                 'errors' => [
                     'search',
                 ],
-            ])
-            ->assertJsonPath('errors.search.0', 'The search field must not be greater than 20 characters.');
+            ]);
     }
 
     public function test_get_books_search_not_found()
@@ -116,7 +122,7 @@ class BookApiTest extends TestCase
         $response = $this->getJson('/api/v1/books?search=Not Found');
 
         $response
-            ->assertStatus(200)
+            ->assertOk()
             ->assertJsonStructure([
                 'success',
                 'data' => [
@@ -135,7 +141,7 @@ class BookApiTest extends TestCase
         $response = $this->getJson('/api/v1/books?perPage=5&columns[]=id&columns[]=title');
 
         $response
-            ->assertStatus(200)
+            ->assertOk()
             ->assertJsonStructure([
                 'success',
                 'data' => [
@@ -164,7 +170,7 @@ class BookApiTest extends TestCase
         ]);
 
         $response
-            ->assertStatus(201)
+            ->assertCreated()
             ->assertJsonStructure([
                 'success',
                 'data' => [
@@ -190,7 +196,12 @@ class BookApiTest extends TestCase
         ]);
 
         $response
-            ->assertStatus(422)
+            ->assertUnprocessable()
+            ->assertInvalid([
+                'title' => 'The title field is required.',
+                'publish_date' => 'The publish date field must match the format Y-m-d.',
+                'author_id' => 'The selected author id is invalid.',
+            ])
             ->assertJsonStructure([
                 'message',
                 'errors' => [
@@ -198,10 +209,7 @@ class BookApiTest extends TestCase
                     'publish_date',
                     'author_id',
                 ],
-            ])
-            ->assertJsonPath('errors.title.0', 'The title field is required.')
-            ->assertJsonPath('errors.publish_date.0', 'The publish date field must match the format Y-m-d.')
-            ->assertJsonPath('errors.author_id.0', 'The selected author id is invalid.');
+            ]);
     }
 
     public function test_show_book()
@@ -209,7 +217,7 @@ class BookApiTest extends TestCase
         $response = $this->getJson('/api/v1/books/1');
 
         $response
-            ->assertStatus(200)
+            ->assertOk()
             ->assertJsonStructure([
                 'success',
                 'data' => [
@@ -236,7 +244,7 @@ class BookApiTest extends TestCase
         $response = $this->getJson('/api/v1/books/1000');
 
         $response
-            ->assertStatus(404)
+            ->assertNotFound()
             ->assertJsonStructure([
                 'message',
             ])
@@ -253,7 +261,7 @@ class BookApiTest extends TestCase
         ]);
 
         $response
-            ->assertStatus(200)
+            ->assertOk()
             ->assertJsonStructure([
                 'success',
                 'data' => [
@@ -279,7 +287,7 @@ class BookApiTest extends TestCase
         ]);
 
         $response
-            ->assertStatus(404)
+            ->assertNotFound()
             ->assertJsonStructure([
                 'message',
             ])
@@ -296,7 +304,12 @@ class BookApiTest extends TestCase
         ]);
 
         $response
-            ->assertStatus(422)
+            ->assertUnprocessable()
+            ->assertInvalid([
+                'title' => 'The title field is required.',
+                'publish_date' => 'The publish date field must match the format Y-m-d.',
+                'author_id' => 'The selected author id is invalid.',
+            ])
             ->assertJsonStructure([
                 'message',
                 'errors' => [
@@ -304,19 +317,14 @@ class BookApiTest extends TestCase
                     'publish_date',
                     'author_id',
                 ],
-            ])
-            ->assertJsonPath('errors.title.0', 'The title field is required.')
-            ->assertJsonPath('errors.publish_date.0', 'The publish date field must match the format Y-m-d.')
-            ->assertJsonPath('errors.author_id.0', 'The selected author id is invalid.');
+            ]);
     }
 
     public function test_delete_book()
     {
         $response = $this->deleteJson('/api/v1/books/3');
 
-        $response
-            ->assertStatus(204)
-            ->assertNoContent();
+        $response->assertNoContent();
     }
 
     public function test_delete_book_not_found()
@@ -324,7 +332,7 @@ class BookApiTest extends TestCase
         $response = $this->deleteJson('/api/v1/books/1000');
 
         $response
-            ->assertStatus(404)
+            ->assertNotFound()
             ->assertJsonStructure([
                 'message',
             ])
