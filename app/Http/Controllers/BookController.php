@@ -94,8 +94,14 @@ class BookController extends Controller
      */
     public function destroy($id)
     {
-        $this->bookRepositoryInterface->delete($id);
+        try {
+            $this->bookRepositoryInterface->delete($id);
 
-        return ApiResponse::sendResponse([], 'Book deleted successfully', 204);
+            return ApiResponse::sendResponse([], 'Book deleted successfully', 204);
+        } catch (ModelNotFoundException $exception) {
+            return ApiResponse::notFound('Book not found');
+        } catch (\Exception $exception) {
+            return ApiResponse::throw($exception);
+        }
     }
 }

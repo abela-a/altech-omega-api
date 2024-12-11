@@ -94,8 +94,14 @@ class AuthorController extends Controller
      */
     public function destroy($id)
     {
-        $this->authorRepositoryInterface->delete($id);
+        try {
+            $this->authorRepositoryInterface->delete($id);
 
-        return ApiResponse::sendResponse([], 'Author deleted successfully', 204);
+            return ApiResponse::sendResponse([], 'Author deleted successfully', 204);
+        } catch (ModelNotFoundException $exception) {
+            return ApiResponse::notFound('Author not found');
+        } catch (\Exception $exception) {
+            return ApiResponse::throw($exception);
+        }
     }
 }
