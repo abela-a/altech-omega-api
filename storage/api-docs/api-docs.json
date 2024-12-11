@@ -1,0 +1,541 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Library Management System API",
+        "description": "Technical test for backend developer position at PT. Altech Omega Andalan. Simple RESTful API for a library management system.",
+        "contact": {
+            "name": "Abel Ardhana Simanungkalit",
+            "url": "https://github.com/abela-a",
+            "email": "abelardhana96@gmail.com"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000/api/v1",
+            "description": "Local V1"
+        }
+    ],
+    "paths": {
+        "/authors/{id}/books": {
+            "get": {
+                "tags": [
+                    "Author"
+                ],
+                "summary": "Get all books by author",
+                "description": "Get all books by author with optional query parameters to filter, sort, and search books.",
+                "operationId": "author.books",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Author ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "perPage",
+                        "in": "query",
+                        "description": "Number of books per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "total",
+                        "in": "query",
+                        "description": "Total number of books",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "404": {
+                        "description": "Author not found"
+                    },
+                    "422": {
+                        "description": "Invalid data"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/authors": {
+            "get": {
+                "tags": [
+                    "Author"
+                ],
+                "summary": "Get all authors",
+                "description": "Get all authors with optional query parameters to filter, sort, and search authors.",
+                "operationId": "author.index",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Search authors by name",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "perPage",
+                        "in": "query",
+                        "description": "Number of authors per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "422": {
+                        "description": "Invalid data"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Author"
+                ],
+                "summary": "Create a new author",
+                "description": "Create a new author with the provided data.",
+                "operationId": "author.store",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "bio": {
+                                        "type": "string"
+                                    },
+                                    "birth_date": {
+                                        "type": "string",
+                                        "format": "date"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "name": "John Doe",
+                                    "bio": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+                                    "birth_date": "1990-01-01"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Author created successfully"
+                    },
+                    "422": {
+                        "description": "Invalid data"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/authors/{id}": {
+            "get": {
+                "tags": [
+                    "Author"
+                ],
+                "summary": "Get author by ID",
+                "description": "Get author by ID.",
+                "operationId": "author.show",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Author ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "404": {
+                        "description": "Author not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Author"
+                ],
+                "summary": "Update author by ID",
+                "description": "Update author by ID with the provided data.",
+                "operationId": "author.update",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Author ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "bio": {
+                                        "type": "string"
+                                    },
+                                    "birth_date": {
+                                        "type": "string",
+                                        "format": "date"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "name": "John Doe",
+                                    "bio": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+                                    "birth_date": "1990-01-01"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Author updated successfully"
+                    },
+                    "404": {
+                        "description": "Author not found"
+                    },
+                    "422": {
+                        "description": "Invalid data"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Author"
+                ],
+                "summary": "Delete author by ID",
+                "description": "Delete author by ID.",
+                "operationId": "author.destroy",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Author ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Author deleted successfully"
+                    },
+                    "404": {
+                        "description": "Author not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/books": {
+            "get": {
+                "tags": [
+                    "Book"
+                ],
+                "summary": "Get all books",
+                "description": "Get all books with optional query parameters to filter, sort, and search books.",
+                "operationId": "book.index",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Search books by title and description",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "perPage",
+                        "in": "query",
+                        "description": "Number of books per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "422": {
+                        "description": "Invalid data"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Book"
+                ],
+                "summary": "Create a new book",
+                "description": "Create a new book with the provided data.",
+                "operationId": "book.store",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "title",
+                                    "publish_date",
+                                    "author_id"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "type": "string"
+                                    },
+                                    "publish_date": {
+                                        "type": "string",
+                                        "format": "date"
+                                    },
+                                    "author_id": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "title": "PHP for beginners",
+                                    "description": "A beginner's guide to PHP",
+                                    "publish_date": "2021-10-01",
+                                    "author_id": 1
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Book created successfully"
+                    },
+                    "422": {
+                        "description": "Invalid data"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/books/{id}": {
+            "get": {
+                "tags": [
+                    "Book"
+                ],
+                "summary": "Get book by ID",
+                "description": "Get book by ID.",
+                "operationId": "book.show",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Book ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "404": {
+                        "description": "Book not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Book"
+                ],
+                "summary": "Update book by ID",
+                "description": "Update book by ID with the provided data.",
+                "operationId": "book.update",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Book ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "title",
+                                    "publish_date",
+                                    "author_id"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "type": "string"
+                                    },
+                                    "publish_date": {
+                                        "type": "string",
+                                        "format": "date"
+                                    },
+                                    "author_id": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "title": "PHP for beginners",
+                                    "description": "A beginner's guide to PHP",
+                                    "publish_date": "2021-10-01",
+                                    "author_id": 1
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Book updated successfully"
+                    },
+                    "404": {
+                        "description": "Book not found"
+                    },
+                    "422": {
+                        "description": "Invalid data"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Book"
+                ],
+                "summary": "Delete book by ID",
+                "description": "Delete book by ID.",
+                "operationId": "book.destroy",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Book ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Book deleted successfully"
+                    },
+                    "404": {
+                        "description": "Book not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Author",
+            "description": "API endpoints for managing authors"
+        },
+        {
+            "name": "Book",
+            "description": "API endpoints for managing books"
+        }
+    ]
+}
