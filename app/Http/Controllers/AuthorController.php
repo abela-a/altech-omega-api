@@ -10,8 +10,14 @@ use App\Http\Resources\AuthorCollection;
 use App\Http\Resources\AuthorResource;
 use App\Interfaces\AuthorRepositoryInterface;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
+use OpenApi\Attributes as OA;
 
+#[OA\Tag(
+    name: 'Author',
+    description: 'API endpoints for managing authors',
+)]
 class AuthorController extends Controller
 {
     private AuthorRepositoryInterface $authorRepositoryInterface;
@@ -21,9 +27,42 @@ class AuthorController extends Controller
         $this->authorRepositoryInterface = $authorRepositoryInterface;
     }
 
-    /**
-     * Display a listing of the resource.
-     */
+    #[
+        OA\Get(
+            path: '/authors',
+            tags: ['Author'],
+            summary: 'Get all authors',
+            description: 'Get all authors with optional query parameters to filter, sort, and search authors.',
+            operationId: 'index',
+            parameters: [
+                new OA\Parameter(
+                    name: 'search',
+                    in: 'query',
+                    description: 'Search authors by name',
+                    required: false,
+                    schema: new OA\Schema(type: 'string'),
+                ),
+                new OA\Parameter(
+                    name: 'perPage',
+                    in: 'query',
+                    description: 'Number of authors per page',
+                    required: false,
+                    schema: new OA\Schema(type: 'integer'),
+                ),
+                new OA\Parameter(
+                    name: 'page',
+                    in: 'query',
+                    description: 'Page number',
+                    required: false,
+                    schema: new OA\Schema(type: 'integer'),
+                ),
+            ],
+            responses: [
+                new OA\Response(response: Response::HTTP_OK, description: 'Successful operation'),
+                new OA\Response(response: Response::HTTP_INTERNAL_SERVER_ERROR, description: 'Internal server error'),
+            ],
+        ),
+    ]
     public function index(QueryAuthorRequest $request)
     {
         $authors = $this->authorRepositoryInterface->index($request->validated());
@@ -31,9 +70,40 @@ class AuthorController extends Controller
         return ApiResponse::sendResponse(new AuthorCollection($authors), '', 200);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    #[
+        OA\Post(
+            path: '/authors',
+            tags: ['Author'],
+            summary: 'Create a new author',
+            description: 'Create a new author with the provided data.',
+            operationId: 'store',
+            requestBody: new OA\RequestBody(
+                required: true,
+                content: new OA\MediaType(
+                    mediaType: 'application/json',
+                    schema: new OA\Schema(
+                        type: 'object',
+                        required: ['name'],
+                        properties: [
+                            new OA\Property(property: 'name', type: 'string'),
+                            new OA\Property(property: 'bio', type: 'string'),
+                            new OA\Property(property: 'birth_date', type: 'string', format: 'date'),
+                        ],
+                        example: [
+                            'name' => 'John Doe',
+                            'bio' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                            'birth_date' => '1990-01-01',
+                        ],
+                    )
+                )
+            ),
+            responses: [
+                new OA\Response(response: Response::HTTP_CREATED, description: 'Author created successfully'),
+                new OA\Response(response: Response::HTTP_UNPROCESSABLE_ENTITY, description: 'Invalid data'),
+                new OA\Response(response: Response::HTTP_INTERNAL_SERVER_ERROR, description: 'Internal server error'),
+            ],
+        )
+    ]
     public function store(StoreAuthorRequest $request)
     {
         $request = $request->validated();
@@ -51,9 +121,29 @@ class AuthorController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
+    #[
+        OA\Get(
+            path: '/authors/{id}',
+            tags: ['Author'],
+            summary: 'Get author by ID',
+            description: 'Get author by ID.',
+            operationId: 'show',
+            parameters: [
+                new OA\Parameter(
+                    name: 'id',
+                    in: 'path',
+                    description: 'Author ID',
+                    required: true,
+                    schema: new OA\Schema(type: 'integer'),
+                ),
+            ],
+            responses: [
+                new OA\Response(response: Response::HTTP_OK, description: 'Successful operation'),
+                new OA\Response(response: Response::HTTP_NOT_FOUND, description: 'Author not found'),
+                new OA\Response(response: Response::HTTP_INTERNAL_SERVER_ERROR, description: 'Internal server error'),
+            ],
+        )
+    ]
     public function show($id)
     {
         try {
@@ -67,9 +157,49 @@ class AuthorController extends Controller
         }
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+    #[
+        OA\Put(
+            path: '/authors/{id}',
+            tags: ['Author'],
+            summary: 'Update author by ID',
+            description: 'Update author by ID with the provided data.',
+            operationId: 'update',
+            parameters: [
+                new OA\Parameter(
+                    name: 'id',
+                    in: 'path',
+                    description: 'Author ID',
+                    required: true,
+                    schema: new OA\Schema(type: 'integer'),
+                ),
+            ],
+            requestBody: new OA\RequestBody(
+                required: true,
+                content: new OA\MediaType(
+                    mediaType: 'application/json',
+                    schema: new OA\Schema(
+                        type: 'object',
+                        properties: [
+                            new OA\Property(property: 'name', type: 'string'),
+                            new OA\Property(property: 'bio', type: 'string'),
+                            new OA\Property(property: 'birth_date', type: 'string', format: 'date'),
+                        ],
+                        example: [
+                            'name' => 'John Doe',
+                            'bio' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                            'birth_date' => '1990-01-01',
+                        ],
+                    )
+                )
+            ),
+            responses: [
+                new OA\Response(response: Response::HTTP_OK, description: 'Author updated successfully'),
+                new OA\Response(response: Response::HTTP_NOT_FOUND, description: 'Author not found'),
+                new OA\Response(response: Response::HTTP_UNPROCESSABLE_ENTITY, description: 'Invalid data'),
+                new OA\Response(response: Response::HTTP_INTERNAL_SERVER_ERROR, description: 'Internal server error'),
+            ],
+        )
+    ]
     public function update(UpdateAuthorRequest $request, $id)
     {
         $request = $request->validated();
@@ -89,9 +219,29 @@ class AuthorController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    #[
+        OA\Delete(
+            path: '/authors/{id}',
+            tags: ['Author'],
+            summary: 'Delete author by ID',
+            description: 'Delete author by ID.',
+            operationId: 'destroy',
+            parameters: [
+                new OA\Parameter(
+                    name: 'id',
+                    in: 'path',
+                    description: 'Author ID',
+                    required: true,
+                    schema: new OA\Schema(type: 'integer'),
+                ),
+            ],
+            responses: [
+                new OA\Response(response: Response::HTTP_NO_CONTENT, description: 'Author deleted successfully'),
+                new OA\Response(response: Response::HTTP_NOT_FOUND, description: 'Author not found'),
+                new OA\Response(response: Response::HTTP_INTERNAL_SERVER_ERROR, description: 'Internal server error'),
+            ],
+        )
+    ]
     public function destroy($id)
     {
         try {
