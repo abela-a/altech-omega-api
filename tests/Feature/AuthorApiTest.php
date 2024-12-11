@@ -224,7 +224,9 @@ class AuthorApiTest extends TestCase
                     'name',
                     'birth_date',
                 ],
-            ]);
+            ])
+            ->assertJsonPath('errors.name.0', 'The name field is required.')
+            ->assertJsonPath('errors.birth_date.0', 'The birth date field must match the format Y-m-d.');
     }
 
     public function test_show_author()
@@ -254,7 +256,8 @@ class AuthorApiTest extends TestCase
             ->assertStatus(404)
             ->assertJsonStructure([
                 'message',
-            ]);
+            ])
+            ->assertJsonPath('message', 'Author not found');
     }
 
     public function test_update_author()
@@ -293,7 +296,8 @@ class AuthorApiTest extends TestCase
             ->assertStatus(404)
             ->assertJsonStructure([
                 'message',
-            ]);
+            ])
+            ->assertJsonPath('message', 'Author not found');
     }
 
     public function test_update_author_validation_error()
@@ -312,7 +316,9 @@ class AuthorApiTest extends TestCase
                     'name',
                     'birth_date',
                 ],
-            ]);
+            ])
+            ->assertJsonPath('errors.name.0', 'The name field is required.')
+            ->assertJsonPath('errors.birth_date.0', 'The birth date field must match the format Y-m-d.');
     }
 
     public function test_delete_author()
@@ -332,6 +338,7 @@ class AuthorApiTest extends TestCase
             ->assertStatus(404)
             ->assertJsonStructure([
                 'message',
-            ]);
+            ])
+            ->assertJsonPath('message', 'Author not found');
     }
 }
