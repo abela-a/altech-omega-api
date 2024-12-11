@@ -25,7 +25,7 @@ class AuthorBookController extends Controller
             tags: ['Author'],
             summary: 'Get all books by author',
             description: 'Get all books by author with optional query parameters to filter, sort, and search books.',
-            operationId: 'index:associated',
+            operationId: 'author.books',
             parameters: [
                 new OA\Parameter(
                     name: 'id',

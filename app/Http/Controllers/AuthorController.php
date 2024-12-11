@@ -33,7 +33,7 @@ class AuthorController extends Controller
             tags: ['Author'],
             summary: 'Get all authors',
             description: 'Get all authors with optional query parameters to filter, sort, and search authors.',
-            operationId: 'index',
+            operationId: 'author.index',
             parameters: [
                 new OA\Parameter(
                     name: 'search',
@@ -77,7 +77,7 @@ class AuthorController extends Controller
             tags: ['Author'],
             summary: 'Create a new author',
             description: 'Create a new author with the provided data.',
-            operationId: 'store',
+            operationId: 'author.store',
             requestBody: new OA\RequestBody(
                 required: true,
                 content: new OA\MediaType(
@@ -128,7 +128,7 @@ class AuthorController extends Controller
             tags: ['Author'],
             summary: 'Get author by ID',
             description: 'Get author by ID.',
-            operationId: 'show',
+            operationId: 'author.show',
             parameters: [
                 new OA\Parameter(
                     name: 'id',
@@ -164,7 +164,7 @@ class AuthorController extends Controller
             tags: ['Author'],
             summary: 'Update author by ID',
             description: 'Update author by ID with the provided data.',
-            operationId: 'update',
+            operationId: 'author.update',
             parameters: [
                 new OA\Parameter(
                     name: 'id',
@@ -226,7 +226,7 @@ class AuthorController extends Controller
             tags: ['Author'],
             summary: 'Delete author by ID',
             description: 'Delete author by ID.',
-            operationId: 'destroy',
+            operationId: 'author.destroy',
             parameters: [
                 new OA\Parameter(
                     name: 'id',
