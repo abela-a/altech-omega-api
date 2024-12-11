@@ -20,8 +20,8 @@ class AuthorResource extends JsonResource
             'bio' => $this->bio,
             'birth_date' => $this->birth_date?->format('Y-m-d'),
 
-            'created_at' => $this->created_at->format('Y-m-d H:i:s'),
-            'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
+            'created_at' => $this->created_at?->format('Y-m-d H:i:s'),
+            'updated_at' => $this->updated_at?->format('Y-m-d H:i:s'),
         ];
     }
 }
