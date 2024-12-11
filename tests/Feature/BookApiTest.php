@@ -198,7 +198,10 @@ class BookApiTest extends TestCase
                     'publish_date',
                     'author_id',
                 ],
-            ]);
+            ])
+            ->assertJsonPath('errors.title.0', 'The title field is required.')
+            ->assertJsonPath('errors.publish_date.0', 'The publish date field must match the format Y-m-d.')
+            ->assertJsonPath('errors.author_id.0', 'The selected author id is invalid.');
     }
 
     public function test_show_book()
@@ -236,7 +239,8 @@ class BookApiTest extends TestCase
             ->assertStatus(404)
             ->assertJsonStructure([
                 'message',
-            ]);
+            ])
+            ->assertJsonPath('message', 'Book not found');
     }
 
     public function test_update_book()
@@ -278,7 +282,8 @@ class BookApiTest extends TestCase
             ->assertStatus(404)
             ->assertJsonStructure([
                 'message',
-            ]);
+            ])
+            ->assertJsonPath('message', 'Book not found');
     }
 
     public function test_update_book_validation_error()
@@ -299,7 +304,10 @@ class BookApiTest extends TestCase
                     'publish_date',
                     'author_id',
                 ],
-            ]);
+            ])
+            ->assertJsonPath('errors.title.0', 'The title field is required.')
+            ->assertJsonPath('errors.publish_date.0', 'The publish date field must match the format Y-m-d.')
+            ->assertJsonPath('errors.author_id.0', 'The selected author id is invalid.');
     }
 
     public function test_delete_book()
@@ -319,6 +327,7 @@ class BookApiTest extends TestCase
             ->assertStatus(404)
             ->assertJsonStructure([
                 'message',
-            ]);
+            ])
+            ->assertJsonPath('message', 'Book not found');
     }
 }
