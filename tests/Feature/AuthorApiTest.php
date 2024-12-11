@@ -114,6 +114,43 @@ class AuthorApiTest extends TestCase
             ->assertJsonCount(0, 'data.items');
     }
 
+    public function test_get_authors_search_validation_error()
+    {
+        $blankSearch = $this->getJson('/api/v1/authors?search=');
+        $blankSearch
+            ->assertStatus(422)
+            ->assertJsonStructure([
+                'message',
+                'errors' => [
+                    'search',
+                ],
+            ])
+            ->assertJsonPath('errors.search.0', 'The search field must be a string.');
+
+        $invalidSearch = $this->getJson('/api/v1/authors?search=Dr');
+        $invalidSearch
+            ->assertStatus(422)
+            ->assertJsonStructure([
+                'message',
+                'errors' => [
+                    'search',
+                ],
+            ])
+            ->assertJsonPath('errors.search.0', 'The search field must be at least 3 characters.');
+
+        $longSearch = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec';
+        $invalidSearch = $this->getJson("/api/v1/authors?search=$longSearch");
+        $invalidSearch
+            ->assertStatus(422)
+            ->assertJsonStructure([
+                'message',
+                'errors' => [
+                    'search',
+                ],
+            ])
+            ->assertJsonPath('errors.search.0', 'The search field must not be greater than 20 characters.');
+    }
+
     public function test_get_authors_paginated()
     {
         $response = $this->getJson('/api/v1/authors?perPage=5&columns[]=id&columns[]=name&page=2');
