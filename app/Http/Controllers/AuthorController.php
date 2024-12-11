@@ -59,6 +59,7 @@ class AuthorController extends Controller
             ],
             responses: [
                 new OA\Response(response: Response::HTTP_OK, description: 'Successful operation'),
+                new OA\Response(response: Response::HTTP_UNPROCESSABLE_ENTITY, description: 'Invalid data'),
                 new OA\Response(response: Response::HTTP_INTERNAL_SERVER_ERROR, description: 'Internal server error'),
             ],
         ),

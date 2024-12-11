@@ -7,6 +7,8 @@ use App\Http\Requests\QueryAuthorBookRequest;
 use App\Http\Resources\AuthorBookCollection;
 use App\Interfaces\BookRepositoryInterface;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use OpenApi\Attributes as OA;
 
 class AuthorBookController extends Controller
 {
@@ -17,9 +19,51 @@ class AuthorBookController extends Controller
         $this->bookRepositoryInterface = $bookRepositoryInterface;
     }
 
-    /**
-     * Display a listing of the resource.
-     */
+    #[
+        OA\Get(
+            path: '/authors/{id}/books',
+            tags: ['Author'],
+            summary: 'Get all books by author',
+            description: 'Get all books by author with optional query parameters to filter, sort, and search books.',
+            operationId: 'index:associated',
+            parameters: [
+                new OA\Parameter(
+                    name: 'id',
+                    in: 'path',
+                    description: 'Author ID',
+                    required: true,
+                    schema: new OA\Schema(type: 'integer'),
+                ),
+                new OA\Parameter(
+                    name: 'perPage',
+                    in: 'query',
+                    description: 'Number of books per page',
+                    required: false,
+                    schema: new OA\Schema(type: 'integer'),
+                ),
+                new OA\Parameter(
+                    name: 'page',
+                    in: 'query',
+                    description: 'Page number',
+                    required: false,
+                    schema: new OA\Schema(type: 'integer'),
+                ),
+                new OA\Parameter(
+                    name: 'total',
+                    in: 'query',
+                    description: 'Total number of books',
+                    required: false,
+                    schema: new OA\Schema(type: 'integer'),
+                ),
+            ],
+            responses: [
+                new OA\Response(response: Response::HTTP_OK, description: 'Successful operation'),
+                new OA\Response(response: Response::HTTP_NOT_FOUND, description: 'Author not found'),
+                new OA\Response(response: Response::HTTP_UNPROCESSABLE_ENTITY, description: 'Invalid data'),
+                new OA\Response(response: Response::HTTP_INTERNAL_SERVER_ERROR, description: 'Internal server error'),
+            ],
+        )
+    ]
     public function index(QueryAuthorBookRequest $request, $authorId)
     {
         $books = $this->bookRepositoryInterface->authorBooks($authorId, $request->validated());
