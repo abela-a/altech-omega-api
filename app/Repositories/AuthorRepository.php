@@ -58,7 +58,9 @@ class AuthorRepository implements AuthorRepositoryInterface
 
     public function delete($id)
     {
-        Author::destroy($id);
+        $author = Author::findOrFail($id);
+        $author->delete();
+
         Cache::forget('authors:'.$id);
     }
 }
