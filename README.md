@@ -39,8 +39,6 @@ I use the Repository Design Pattern in this project. The Repository Design Patte
 | -------------------- | ------- | ------------------------------------------------- |
 | `authors_name_index` | `name`  | Index for optimizing queries on the `name` column |
 
----
-
 #### Table: `books`
 
 | Column Name    | Data Type   | Attributes                  | Description                            |
