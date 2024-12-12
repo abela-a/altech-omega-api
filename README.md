@@ -153,7 +153,13 @@ To optimize the performance of this project, I implemented several tuning strate
     # DB_PASSWORD=
     ```
 
-5. Run migrations and seed the database:
+5. Generate app key for encryption:
+
+    ```sh
+    php artisan key:generate
+    ```
+
+6. Run migrations and seed the database:
 
     ```sh
     php artisan migrate --seed
